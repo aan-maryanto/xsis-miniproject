@@ -1,8 +1,16 @@
 package com.example.xsisminiproject.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
-@Service
-public class FileService {
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
+public interface FileService {
+    void init();
+    void store(MultipartFile file);
+    Stream<Path> loadAll();
+    Path load(String fileName);
+    Resource loadAsResource(String fileName);
+    void deleteAll();
 }
