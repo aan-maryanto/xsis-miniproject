@@ -7,17 +7,19 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final FileServiceImp fileServiceImp;
 
-    public MovieService(MovieRepository movieRepository) {
+    public MovieService(MovieRepository movieRepository, FileServiceImp fileServiceImp) {
         this.movieRepository = movieRepository;
+        this.fileServiceImp = fileServiceImp;
     }
 
     public List<Movie> getAllMovie() {
@@ -29,11 +31,14 @@ public class MovieService {
     }
 
     public Movie postMovie(Movie requestBody) {
+        requestBody.setCreatedAt(Instant.now());
+        requestBody.setUpdatedAt(Instant.now());
         return movieRepository.save(requestBody);
     }
 
     public Movie updateMovie(Integer id, Movie requestBody) {
         requestBody.setId(id);
+        requestBody.setUpdatedAt(Instant.now());
         return movieRepository.save(requestBody);
     }
 
@@ -42,6 +47,8 @@ public class MovieService {
     }
 
     public String uploadImageMovie(MultipartFile file) {
-        return null;
+        var filename = file.getOriginalFilename();
+        fileServiceImp.store(file);
+        return fileServiceImp.load(filename).toString();
     }
 }
