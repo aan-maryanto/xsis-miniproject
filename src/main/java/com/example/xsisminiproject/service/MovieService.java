@@ -32,13 +32,16 @@ public class MovieService {
 
     public Movie postMovie(Movie requestBody) {
         requestBody.setCreatedAt(Instant.now());
-        requestBody.setUpdatedAt(Instant.now());
         return movieRepository.save(requestBody);
     }
 
     public Movie updateMovie(Integer id, Movie requestBody) {
-        requestBody.setId(id);
-        requestBody.setUpdatedAt(Instant.now());
+        var movie = movieRepository.findById(id).orElseThrow(() -> new ApiResponseException("Movie with id $id not found"));
+        movie.setTitle(requestBody.getTitle());
+        movie.setImage(requestBody.getImage());
+        movie.setDescription(requestBody.getDescription());
+        movie.setRating(requestBody.getRating());
+        movie.setUpdatedAt(Instant.now());
         return movieRepository.save(requestBody);
     }
 
